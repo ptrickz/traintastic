@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
+import 'package:traintastic/presentation/widgets/button.dart';
+import 'package:traintastic/presentation/widgets/textformfield.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -63,142 +65,49 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: CColors.tertiary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Type here...",
-                        hintStyle: Theme.of(context).textTheme.bodyMedium,
-                        prefixIcon: SizedBox(
-                          width: 110,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'Email',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  CustomTextFormField(
+                    onTap: null,
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    obscureText: false,
+                    isPasswordField: false,
+                    hintText: "Type here...",
+                    label: "Email",
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: CColors.tertiary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: TextFormField(
-                      obscureText: !showPassword,
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "●●●●●●●●",
-                        hintStyle: Theme.of(context).textTheme.bodyMedium,
-                        prefixIcon: SizedBox(
-                          width: 110,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'Password',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showPassword = !showPassword;
-                            });
-                          },
-                          child: Icon(
-                            showPassword
-                                ? CupertinoIcons.eye_slash_fill
-                                : CupertinoIcons.eye_fill,
-                            size: 20,
-                            color: CupertinoColors.systemGrey2,
-                          ),
-                        ),
-                      ),
-                    ),
+                  CustomTextFormField(
+                    onTap: null,
+                    keyboardType: null,
+                    controller: passwordController,
+                    obscureText: !showPassword,
+                    isPasswordField: true,
+                    hintText: "●●●●●●●●",
+                    label: "Password",
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: CColors.tertiary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: TextFormField(
-                      obscureText: !showCfPassword,
-                      controller: confirmPasswordController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "●●●●●●●●",
-                        hintStyle: Theme.of(context).textTheme.bodyMedium,
-                        prefixIcon: SizedBox(
-                          width: 110,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'Confirm Password',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showCfPassword = !showCfPassword;
-                            });
-                          },
-                          child: Icon(
-                            showCfPassword
-                                ? CupertinoIcons.eye_slash_fill
-                                : CupertinoIcons.eye_fill,
-                            size: 20,
-                            color: CupertinoColors.systemGrey2,
-                          ),
-                        ),
-                      ),
-                    ),
+                  CustomTextFormField(
+                    onTap: null,
+                    keyboardType: null,
+                    controller: confirmPasswordController,
+                    obscureText: !showCfPassword,
+                    isPasswordField: true,
+                    hintText: "●●●●●●●●",
+                    label: "Confirm Password",
                   ),
                 ],
               )),
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CColors.primary,
-                    foregroundColor: CColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text("Register"),
-                ),
-              ),
+              CustomButton(
+                  width: double.infinity,
+                  isGhostButton: false,
+                  text: "Register",
+                  onTap: () {}),
             ],
           ),
         ),
