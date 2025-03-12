@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950638541761",
+    "project_id": "traintastic-2e43d",
+    "storage_bucket": "traintastic-2e43d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950638541761:android:8bacf40de67277c3fccd40",
+        "android_client_info": {
+          "package_name": "com.example.traintastic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSQd1pkmE2bV92nd2uXhfgPwZTgJY8iSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
