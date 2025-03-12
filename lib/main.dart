@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
+import 'package:traintastic/presentation/screens/auth/login.dart';
 import 'package:traintastic/presentation/screens/onboarding/onboarding.dart';
 
 void main() {
@@ -15,11 +16,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Traintastic',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: CColors.primary),
+        colorScheme: ColorScheme.fromSeed(seedColor: CColors.primary),
         useMaterial3: true,
       ),
-      home: const OnboardingPage(),
+      home: const LoginPage(),
     );
   }
 }

@@ -59,6 +59,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
+                FocusScope.of(context).unfocus();
               },
               icon: const Icon(CupertinoIcons.chevron_back)),
           title: CupertinoSearchTextField(
@@ -117,8 +118,10 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
                           "Subtitle for ${filtered[index]}"), // Secondary text
                       trailing:
                           const Icon(Icons.arrow_forward_ios), // Trailing icon
-                      onTap: () => Navigator.pop(
-                          context, filtered[index]), // Click action
+                      onTap: () {
+                        Navigator.pop(context, filtered[index]);
+                        FocusScope.of(context).unfocus();
+                      }, // Click action
                     );
                   }),
         ),

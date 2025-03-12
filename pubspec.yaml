@@ -37,6 +37,9 @@ dependencies:
   introduction_screen: ^3.1.17
   flutter_svg: ^2.0.17
   floating_bottom_navigation_bar: ^1.5.2
+  get: ^4.7.2
+  intl:
+  toastification: ^3.0.2
 
 dev_dependencies:
   flutter_test:
