@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/firebase_options.dart';
-import 'package:traintastic/presentation/screens/auth/login.dart';
 import 'package:traintastic/presentation/screens/onboarding/onboarding.dart';
 
 void main() async {
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: CColors.primary),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: const OnboardingPage(),
     );
   }
 }

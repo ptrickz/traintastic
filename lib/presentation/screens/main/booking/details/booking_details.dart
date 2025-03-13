@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/presentation/screens/main/home/home.dart';
-import 'package:traintastic/presentation/screens/main/tickets/tickets.dart';
 
 // ignore: must_be_immutable
 class BookingDetailsPage extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'package:traintastic/core/services/firestore_services.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/data/models/train_model.dart';
-import 'package:traintastic/presentation/screens/main/booking/coaches/coach_seats.dart';
 
 // ignore: must_be_immutable
 class TrainsReturnPage extends StatefulWidget {

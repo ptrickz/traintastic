@@ -18,6 +18,7 @@ import 'package:traintastic/presentation/widgets/button.dart';
 import 'package:traintastic/presentation/widgets/datepicker.dart';
 import 'package:traintastic/presentation/widgets/textformfield.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatefulWidget {
   int navIndex;
   HomePage({super.key, required this.navIndex});
