@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
+import 'package:traintastic/core/services/auth_service.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/presentation/screens/auth/forgot_password.dart';
@@ -39,8 +42,9 @@ class _LoginPageState extends State<LoginPage> {
                   height: 350,
                   child: Center(
                     child: Image.asset(
-                      "assets/images/tren.png",
-                      width: 150,
+                      "assets/images/ttlogo.png",
+                      width: 250,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -102,14 +106,33 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     isGhostButton: false,
                     text: "Login",
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         isLoginWithoutValidation = true;
                       });
                       if (emailController.text.isNotEmpty &&
                           passwordController.text.isNotEmpty) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                        String message = await AuthService().signin(
+                            email: emailController.text,
+                            password: passwordController.text);
+                        if (message == "Success") {
+                          HelperFunctions.showToast(
+                              context,
+                              message,
+                              ToastificationType.success,
+                              CupertinoIcons.check_mark_circled);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        navIndex: 0,
+                                      )));
+                        } else {
+                          HelperFunctions.showToast(
+                              context,
+                              message,
+                              ToastificationType.error,
+                              CupertinoIcons.exclamationmark);
+                        }
                       } else {
                         HelperFunctions.showToast(
                             context,

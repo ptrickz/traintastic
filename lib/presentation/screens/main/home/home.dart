@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
+import 'package:traintastic/core/services/auth_service.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/data/models/core_model.dart';
@@ -15,7 +19,8 @@ import 'package:traintastic/presentation/widgets/datepicker.dart';
 import 'package:traintastic/presentation/widgets/textformfield.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  int navIndex;
+  HomePage({super.key, required this.navIndex});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,7 +33,6 @@ class _HomePageState extends State<HomePage> {
   TextEditingController returnTimeController = TextEditingController();
   TextEditingController passengersController = TextEditingController();
 
-  int index = 0;
   int selectedChip = 0;
   bool isSearchWithoutValidation = false;
 
@@ -43,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
-        body: index == 0
+        body: widget.navIndex == 0
             ? Stack(
                 children: [
                   Column(
@@ -79,12 +83,14 @@ class _HomePageState extends State<HomePage> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "Jon Bovi",
+                                            HelperFunctions.getGreeting(),
                                             style:
                                                 TextStyle(color: CColors.white),
                                           ),
                                           Text(
-                                            "jonbovi@gmail.com",
+                                            FirebaseAuth.instance.currentUser
+                                                    ?.email ??
+                                                "XXX",
                                             style:
                                                 TextStyle(color: CColors.white),
                                           ),
@@ -94,7 +100,8 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await AuthService().signout();
                                     Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -138,6 +145,16 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.all(15),
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: 80,
+                                    child: Center(
+                                      child: Image.asset(
+                                        "assets/images/ttlogo.png",
+                                        width: 80,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
                                   Row(
                                     children: [
                                       ChoiceChip(
@@ -160,13 +177,11 @@ class _HomePageState extends State<HomePage> {
                                       const SizedBox(
                                           width: 12), // Space between chips
                                       ChoiceChip(
-                                        label: const Text("Return Trip"),
+                                        label: const Text("Return (Disabled)"),
                                         selected: selectedChip == 1,
                                         selectedColor: CColors.primary,
                                         onSelected: (bool selected) {
-                                          setState(() {
-                                            selectedChip = 1;
-                                          });
+                                          null;
                                         },
                                         labelStyle: TextStyle(
                                           color: selectedChip == 1
@@ -302,16 +317,6 @@ class _HomePageState extends State<HomePage> {
                                       passengersController.text.isEmpty &&
                                           isSearchWithoutValidation,
                                       "Fields cannot be empty"),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  CustomPaint(
-                                    size: const Size(double.infinity, 1),
-                                    painter: DashPainter(),
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
                                   CustomButton(
                                       width: 400,
                                       isGhostButton: false,
@@ -357,17 +362,17 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               )
-            : index == 1
+            : widget.navIndex == 1
                 ? const TicketsPage()
                 : const ProfilePage(),
         extendBody: true,
         bottomNavigationBar: FloatingNavbar(
           onTap: (int val) {
             setState(() {
-              index = val;
+              widget.navIndex = val;
             });
           },
-          currentIndex: index,
+          currentIndex: widget.navIndex,
           iconSize: 20,
           backgroundColor: CColors.secondary,
           selectedBackgroundColor: CColors.white,

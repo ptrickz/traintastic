@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:traintastic/core/services/firestore_services.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/data/models/train_model.dart';
-import 'package:traintastic/presentation/screens/main/booking/coaches/coaches_depart.dart';
+import 'package:traintastic/presentation/screens/main/booking/coaches/coach_seats.dart';
 
 // ignore: must_be_immutable
 class TrainsDepartPage extends StatefulWidget {
@@ -25,13 +26,21 @@ class TrainsDepartPage extends StatefulWidget {
 }
 
 class _TrainsPageState extends State<TrainsDepartPage> {
-  final List<Train> trainData = [
-    Train(trainNo: 1, trainName: "The Royal Express", ticketPrice: 50.0),
-    Train(trainNo: 2, trainName: "Golden Bullet", ticketPrice: 45.0),
-    Train(trainNo: 3, trainName: "Silver Streak", ticketPrice: 55.0),
-    Train(trainNo: 4, trainName: "Blue Horizon", ticketPrice: 60.0),
-    Train(trainNo: 5, trainName: "Emerald Arrow", ticketPrice: 52.0),
-  ];
+  List<Train> trainData = [];
+
+  void _fetchTrains() {
+    FirestoreServices().getTrains().listen((trains) {
+      setState(() {
+        trainData = trains;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTrains();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,138 +53,156 @@ class _TrainsPageState extends State<TrainsDepartPage> {
         ),
         body: Padding(
             padding: const EdgeInsets.all(20),
-            child: ListView.builder(
-                itemCount: trainData.length,
-                itemBuilder: (BuildContext context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: ClipPath(
-                      clipper: TicketClipper(),
-                      child: Card(
-                        elevation: 5,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+            child: trainData.isEmpty
+                ? const Center(child: Text("No results found"))
+                : ListView.builder(
+                    itemCount: trainData.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: ClipPath(
+                          clipper: TicketClipper(),
+                          child: Card(
+                            elevation: 5,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CityColumn(
-                                      title: widget.from,
-                                      subtitle: widget.from),
-                                  Column(
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.directions_transit,
-                                          color: CColors.primary),
-                                      const SizedBox(height: 4),
-                                      Container(
-                                        width: 60,
-                                        height: 2,
-                                        color: CColors.primary,
+                                      CityColumn(
+                                          title: widget.from,
+                                          subtitle: widget.from),
+                                      Column(
+                                        children: [
+                                          Icon(Icons.directions_transit,
+                                              color: CColors.primary),
+                                          const SizedBox(height: 4),
+                                          Container(
+                                            width: 60,
+                                            height: 2,
+                                            color: CColors.primary,
+                                          ),
+                                        ],
+                                      ),
+                                      CityColumn(
+                                          title: widget.to,
+                                          subtitle: widget.to),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TimeColumn(
+                                          time: "10:00 AM",
+                                          date: HelperFunctions.formatDate2(
+                                              widget.departureDate)),
+                                      TimeColumn(
+                                          time: "04:10 AM",
+                                          date:
+                                              "Train No: ${trainData[index].trainNo}"),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  CustomPaint(
+                                    size: const Size(double.infinity, 1),
+                                    painter: DashPainter(),
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        trainData[index].trainName,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        HelperFunctions.formatCurrency(
+                                            trainData[index].ticketPrice),
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
-                                  CityColumn(
-                                      title: widget.to, subtitle: widget.to),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TimeColumn(
-                                      time: "10:00 AM",
-                                      date: HelperFunctions.formatDate2(
-                                          widget.departureDate)),
-                                  TimeColumn(
-                                      time: "04:10 AM",
-                                      date:
-                                          "Train No: ${trainData[index].trainNo.toString()}"),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              CustomPaint(
-                                size: const Size(double.infinity, 1),
-                                painter: DashPainter(),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    trainData[index].trainName,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    HelperFunctions.formatCurrency(
-                                        trainData[index].ticketPrice),
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Row(
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.access_time,
-                                          color: Colors.grey),
-                                      SizedBox(width: 5),
-                                      Text("18h 15m | Non-Stop"),
+                                      const Row(
+                                        children: [
+                                          Icon(Icons.access_time,
+                                              color: Colors.grey),
+                                          SizedBox(width: 5),
+                                          Text("18h 15m | Non-Stop"),
+                                        ],
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CoachSeatsDepartPage(
+                                                        trainNo:
+                                                            trainData[index]
+                                                                .trainNo
+                                                                .toString(),
+                                                        trainId:
+                                                            trainData[index].id,
+                                                        ticketPrice:
+                                                            trainData[index]
+                                                                .ticketPrice,
+                                                        passengers:
+                                                            widget.passengers,
+                                                        trainName:
+                                                            trainData[index]
+                                                                .trainName,
+                                                        returnDate:
+                                                            widget.returnDate,
+                                                        departureDate: widget
+                                                            .departureDate,
+                                                        from: widget.from,
+                                                        to: widget.to,
+                                                      )));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: CColors.primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: const Text("Select",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
                                     ],
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CoachesDepartPage(
-                                                    ticketPrice:
-                                                        trainData[index]
-                                                            .ticketPrice,
-                                                    passengers:
-                                                        widget.passengers,
-                                                    trainName: trainData[index]
-                                                        .trainName,
-                                                  )));
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: CColors.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    child: const Text("Select",
-                                        style: TextStyle(color: Colors.white)),
-                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                })));
+                      );
+                    })));
   }
 }
 

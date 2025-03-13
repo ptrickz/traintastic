@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:toastification/toastification.dart';
 
@@ -33,6 +35,18 @@ class HelperFunctions {
     return format.parse(formattedPrice).toDouble();
   }
 
+  static String getGreeting() {
+    final hour = DateTime.now().hour;
+
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  }
+
   static showToast(BuildContext context, String message,
       ToastificationType type, IconData icon) {
     toastification.show(
@@ -59,5 +73,36 @@ class HelperFunctions {
             ),
           )
         : const SizedBox.shrink();
+  }
+
+  static String formatSeatList(List<String> seats) {
+    List<String> upperCaseSeats = seats.map((s) => s.toUpperCase()).toList();
+    if (upperCaseSeats.length <= 1) return upperCaseSeats.join();
+    return "${upperCaseSeats.sublist(0, upperCaseSeats.length - 1).join(', ')} & ${upperCaseSeats.last}";
+  }
+
+  static String generateFirestoreDocId(String email) {
+    String username = email.split('@')[0]; // Extract username before '@'
+    String randomDigits = (1000 + Random().nextInt(9000))
+        .toString(); // Generate 4-digit random number
+    return "$username-$randomDigits";
+  }
+
+  static String formatTicketDetails({
+    required String trainName,
+    required String departureDate,
+    required String departureTime,
+    required String arrivalTime,
+    required String from,
+    required String to,
+    required List<String> selectedSeatList,
+    required String coachNo,
+  }) {
+    return "$trainName | $departureDate | $departureTime - $arrivalTime | $from → $to | Coach $coachNo | Seat(s): ${selectedSeatList.map((seat) => seat.toUpperCase()).join(", ")}";
+  }
+
+  static String uint8ListToBase64(Uint8List data) {
+    String base64String = base64Encode(data);
+    return "data:image/png;base64,$base64String"; // Change to image/jpeg if needed
   }
 }

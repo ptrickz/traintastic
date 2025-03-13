@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -30,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -71,4 +65,25 @@ class DefaultFirebaseOptions {
     storageBucket: 'traintastic-2e43d.firebasestorage.app',
     iosBundleId: 'com.example.traintastic',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCLyKZbi9Q156YgGsVZTOyxmxb-hCDyMO8',
+    appId: '1:950638541761:web:a67b2e54f9b9abd5fccd40',
+    messagingSenderId: '950638541761',
+    projectId: 'traintastic-2e43d',
+    authDomain: 'traintastic-2e43d.firebaseapp.com',
+    storageBucket: 'traintastic-2e43d.firebasestorage.app',
+    measurementId: 'G-FL4150H503',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCLyKZbi9Q156YgGsVZTOyxmxb-hCDyMO8',
+    appId: '1:950638541761:web:de5f4c890a038057fccd40',
+    messagingSenderId: '950638541761',
+    projectId: 'traintastic-2e43d',
+    authDomain: 'traintastic-2e43d.firebaseapp.com',
+    storageBucket: 'traintastic-2e43d.firebasestorage.app',
+    measurementId: 'G-121ZYF2YKJ',
+  );
+
 }

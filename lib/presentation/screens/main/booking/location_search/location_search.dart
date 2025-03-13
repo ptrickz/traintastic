@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:traintastic/core/services/firestore_services.dart';
+import 'package:traintastic/data/models/locations_model.dart';
 
 class LocationSearchPage extends StatefulWidget {
   final bool selectable;
   final VoidCallback refreshCallback;
+
   const LocationSearchPage({
     super.key,
     required this.selectable,
@@ -16,36 +19,46 @@ class LocationSearchPage extends StatefulWidget {
 
 class _LocationSearchPageState extends State<LocationSearchPage> {
   TextEditingController searchController = TextEditingController();
-  bool isSearched = false;
   bool isChanging = false;
   bool isLoading = false;
   String searchText = "";
 
-  final List<String> locations =
-      List.generate(20, (index) => "Location ${index + 1}");
+  List<Locations> allLocations = [];
+  List<Locations> filteredLocations = [];
 
-  List<String> filtered = [];
-
-  void _initScreen() async {
-    if (searchText == '') {
-      filtered = List.from(locations);
-    } else {
-      filtered = locations
-          .where((location) =>
-              location.toLowerCase().contains(searchText.toLowerCase()))
-          .toList();
-    }
+  void _filterLocations(String query) {
     setState(() {
+      isLoading = true;
+      searchText = query;
+      if (query.isEmpty) {
+        filteredLocations = List.from(allLocations); // Show all if empty
+      } else {
+        filteredLocations = allLocations.where((location) {
+          final nameMatch =
+              location.locationName.toLowerCase().contains(query.toLowerCase());
+          final idMatch =
+              location.id.toLowerCase().contains(query.toLowerCase());
+
+          return nameMatch || idMatch;
+        }).toList();
+      }
       isLoading = false;
+    });
+  }
+
+  void _fetchLocations() {
+    FirestoreServices().getLocations().listen((locations) {
+      setState(() {
+        allLocations = locations;
+        filteredLocations = locations; // Initially show all locations
+      });
     });
   }
 
   @override
   void initState() {
-    if (searchController.text != '') {
-      _initScreen();
-    }
     super.initState();
+    _fetchLocations();
   }
 
   @override
@@ -69,33 +82,14 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
               horizontal: 10,
               vertical: 10,
             ),
-            onChanged: (val) {
-              setState(() {
-                isLoading = true;
-                isChanging = true;
-                isSearched = true;
-                searchText = val;
-                _initScreen();
-              });
-            },
+            onChanged: _filterLocations,
             prefixIcon: isChanging
                 ? const SizedBox.shrink()
                 : const Icon(CupertinoIcons.search),
             autofocus: true,
-            onSubmitted: (val) {
-              setState(() {
-                isLoading = true;
-                isSearched = true;
-                searchText = val;
-                _initScreen();
-              });
-            },
             onSuffixTap: () {
               searchController.clear();
-              setState(() {
-                isSearched = false;
-                isChanging = false;
-              });
+              _filterLocations('');
             },
             style: Theme.of(context).textTheme.bodyLarge,
             controller: searchController,
@@ -103,27 +97,26 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: filtered.isEmpty
-              ? const Center(
-                  child: Text("No results found"),
-                )
-              : ListView.builder(
-                  itemCount: filtered.length,
-                  itemBuilder: (BuildContext context, index) {
-                    return ListTile(
-                      leading: const CircleAvatar(
-                          child: Icon(Icons.location_pin)), // Icon/Avatar
-                      title: Text(filtered[index]), // Main text
-                      subtitle: Text(
-                          "Subtitle for ${filtered[index]}"), // Secondary text
-                      trailing:
-                          const Icon(Icons.arrow_forward_ios), // Trailing icon
-                      onTap: () {
-                        Navigator.pop(context, filtered[index]);
-                        FocusScope.of(context).unfocus();
-                      }, // Click action
-                    );
-                  }),
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator.adaptive())
+              : filteredLocations.isEmpty
+                  ? const Center(child: Text("No results found"))
+                  : ListView.builder(
+                      itemCount: filteredLocations.length,
+                      itemBuilder: (BuildContext context, index) {
+                        final loca = filteredLocations[index];
+                        return ListTile(
+                          leading: const CircleAvatar(
+                              child: Icon(Icons.location_pin)), // Icon/Avatar
+                          title: Text(loca.id.toUpperCase()), // Main text
+                          subtitle: Text(loca.locationName), // Secondary text
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.pop(context, loca.locationName);
+                            FocusScope.of(context).unfocus();
+                          },
+                        );
+                      }),
         ),
       ),
     );

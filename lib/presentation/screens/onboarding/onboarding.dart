@@ -33,8 +33,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
           title: "Welcome to Traintastic!",
           body: "Ride the Rails, Skip the Lines!",
           image: Image.asset(
-            "assets/images/tren.png",
-            width: 150,
+            "assets/images/ttlogo.png",
+            width: 250,
+            fit: BoxFit.cover,
           ),
         ),
         PageViewModel(

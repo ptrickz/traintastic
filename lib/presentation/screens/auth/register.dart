@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:toastification/toastification.dart';
+import 'package:traintastic/core/services/auth_service.dart';
 import 'package:traintastic/core/utils/constants/colors.dart';
 import 'package:traintastic/core/utils/helpers/helper_functions.dart';
 import 'package:traintastic/presentation/screens/main/home/home.dart';
@@ -124,15 +127,43 @@ class _RegisterPageState extends State<RegisterPage> {
                     width: double.infinity,
                     isGhostButton: false,
                     text: "Register",
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         isLoginWithoutValidation = true;
                       });
                       if (emailController.text.isNotEmpty &&
                           passwordController.text.isNotEmpty &&
-                          confirmPasswordController.text.isNotEmpty) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                          confirmPasswordController.text.isNotEmpty &&
+                          (passwordController.text ==
+                              confirmPasswordController.text)) {
+                        String message = await AuthService().signup(
+                            email: emailController.text,
+                            password: passwordController.text);
+                        if (message == "Success") {
+                          HelperFunctions.showToast(
+                              context,
+                              message,
+                              ToastificationType.success,
+                              CupertinoIcons.check_mark_circled);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        navIndex: 0,
+                                      )));
+                        } else {
+                          HelperFunctions.showToast(
+                              context,
+                              message,
+                              ToastificationType.error,
+                              CupertinoIcons.exclamationmark);
+                        }
+                      } else if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        HelperFunctions.showToast(
+                            context,
+                            "Passwords do not match!",
+                            ToastificationType.error,
+                            CupertinoIcons.exclamationmark_circle);
                       } else {
                         HelperFunctions.showToast(
                             context,
